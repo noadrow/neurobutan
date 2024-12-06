@@ -1,26 +1,24 @@
 import random
+
+import gym
+from gym.envs.registration import register
+
 import matplotlib.pyplot as plt
 import networkx as nx
 import time
-import gym3
 from stable_baselines3 import PPO
-from procgen import ProcgenGym3Env
-import torch
 
-X,x,Y,y,z = 0,0,0,0,0
+random_input = [0,0]
+blue_ray_output = [0,0]
+X,Y,x,y = random_input[0],random_input[1],blue_ray_output[0],blue_ray_output[1]
 
 # Define a custom environment for the game
-class NeuronGameEnv:
+class NeuronGameEnv(gym.Env):
     def __init__(self,X,Y,x,y):
         print("Initializing Neuron Game Environment...")
         self.neuron = self.Neuron(X, Y)  # Initialize Neuron with default x and y
         self.player = self.Player(x, y)  # Initialize Player with default x and y
         self.game = self.Game()
-        self.id = "noa/blueray-v0",
-        self.entry_point = [0, 0, 0, 0],
-        self.reward_threshold = 200,
-        self.max_episode_steps = 100,
-        self.disable_env_checker = True
 
     class Neuron:
         def __init__(self, _x, _y):
@@ -130,84 +128,20 @@ class NeuronGameEnv:
             self.player.activate()
             print("Game reset.")
 
-    class Act:
-        # connect to other neurons
-        def __init__(self,x,y,z):
-            self.x = x
-            self.y = y
-            self.z = z
-
-        def change_input(self,x,y):
-            self.x = x
-            self.y = y
-
-    class ac_space:
-        def __init__(self,x,y,z):
-            self.x = x
-            self.y = y
-            self.z = z
-
-        def change_input(self,x,y):
-            self.x = x
-            self.y = y
-
-    class observe:
-        #call state from game object
-        def __init__(self,game):
-            return game.game_state()
-
-    class num:
-        def __init__(self, game):
-            self.game = game
-
-        def get_game_state(self):
-            return self.game.game_state()
 
 env = NeuronGameEnv(X,Y,x,y)
-game = env.Game()
-neuron = env.Neuron(X,Y)
-player = env.Player(x,y)
-model = PPO("blueray", env, verbose=1)
-model.learn(total_timesteps=10000)
-
-
-# Use the model to make decisions
-observation = env.reset()
-action, _ = model.predict(observation)
-
 print("Initializing PPO...")
-step = 0
 # Register the environment
-new_spec = {
-    id: "noa/blueray-v0"
-}
-
-#gym3.env.register(new_spec)
-
-tt = torch.tensor([0,0,0])  # This should be a tensor with proper shape and type
-while True:
-    action = env.ac_space(0,0,0)
-    env.Act.change_input(self=env, x=action.x, y=action.y)
-
-    env.Act.change_input(gym3.types_np.sample(env.ac_space(0,0,0),bshape=(tt,)))
-    env.num.get_game_state(game)
-    rew, obs, first = env.observe(game)
-    print(f"step {step} reward {rew} first {first}")
-    step += 1
-#env.register(entry_point=[0,0,0,0])
-env = gym3.make("noa/blueray-v0",reward_threshold = 200.0,
-                nondeterministic = False,
-                max_episode_steps = 1000,
-                order_enforce = True,
-                autoreset = False,
-                disable_env_checker = False,
-                apply_api_compatibility = False,
-                kwargs = env)
-
+register(
+    id="blueray-v0",  # Unique name for the environment
+    entry_point="__main__:NeuronGameEnv",  # Path to the environment class
+)
+# env = gym.make("blueray-v0",max_episode_steps=1,disable_env_checker=False, X=X, x=x , Y=Y, y=y)
+env = gym.make("CartPole-v1",max_episode_steps=1,disable_env_checker=False,X=X, x=x , Y=Y, y=y)
 observation, info = env.reset(seed=42)
 
 for _ in range(1000):
-    X, Y, x, y = 0,0,0,0
+    X, Y, x, y = random_input[0], random_input[1], blue_ray_output[0], blue_ray_output[1]
     # this is where you would insert your policy
     action = env.action_space.sample(X, Y, x, y)
 
@@ -219,9 +153,19 @@ for _ in range(1000):
     if terminated or truncated:
         observation, info = env.reset()
 
-    # Implement game state representation, actions, and rewards
-
 env.close()
+    # Implement game state representation, actions, and rewards
+game = env.Game()
+neuron = env.Neuron(X,Y)
+player = env.Player(x,y)
+model = PPO("MlpPolicy", env, verbose=1)
+model.learn(total_timesteps=10000)
+
+
+# Use the model to make decisions
+observation = env.reset()
+action, _ = model.predict(observation)
+
 
 
 
@@ -259,8 +203,8 @@ def plot_neuron_graph(game):
 
 
 # Initialize PPO
-print("Initializing PPO...")
-gym = PPO("noa/blueray-v0", env, verbose=1)
+# print("Initializing PPO...")
+# g = PPO("blueray", env, verbose=1)
 
 game = env.Game()
 neuron = env.Neuron(X, Y)
@@ -272,7 +216,6 @@ model.learn(total_timesteps=10000)
 print("Starting model predictions...")
 observation = env.game_state()
 action, _ = model.predict(observation)
-blue_ray_output[0], blue_ray_output[1] = action  # Update blue_ray_output with the predicted action
 print(f"Action taken: {action}")
 
 # Start the game
