@@ -1,15 +1,55 @@
 import gym
 import random
 import numpy as np
+from networkx import interval_graph
 
+print('loading blue_ray')
+
+def plot_neuron_graph(game):
+    import matplotlib
+    import matplotlib.pyplot as plt
+    matplotlib.use('TkAgg')
+    import networkx as nx
+    # Create a graph
+    G = nx.Graph()
+
+    # Add neurons as nodes to the graph
+    for neuron in game.neurons:
+        G.add_node((neuron.x, neuron.y), activated=neuron.activated)
+
+    # Add connections as edges
+    for neuron in game.neurons:
+        if (neuron.connections==[]):
+            neuron.connections = game.neurons[0],game.neurons[1]
+        for connected_neuron in neuron.connections:
+            G.add_edge((neuron.x, neuron.y), (connected_neuron.x, connected_neuron.y))
+
+    # Set up the plot
+    plt.figure(figsize=(8, 8))
+
+    # Draw the graph with node positions
+    pos = {(neuron.x, neuron.y): (neuron.x, neuron.y) for neuron in game.neurons}
+    nx.draw(G, pos, with_labels=False, node_size=100, node_color='yellow' if neuron.activated else 'gray',
+            edge_color='gray')
+
+    # Plot the player
+    if game.player:
+        plt.scatter(game.player.x, game.player.y, color='purple', s=100, label='Player')
+
+    # Show the plot
+    plt.title('Neuron Network with Player')
+    plt.xlabel('X Position')
+    plt.ylabel('Y Position')
+    plt.legend('Player')
+    plt.pause(100)
 
 # Define a custom environment for the game
 class NeuronGameEnv(gym.Env):
-    def __init__(self, X, Y, x, y):
+    def __init__(self):
         super().__init__()
-        print("Initializing Neuron Game Environment...")
-        self.neuron = self.Neuron(X, Y)  # Initialize Neuron with default x and y
-        self.player = self.Player(x, y)  # Initialize Player with default x and y
+        print("Initialiself.Neuron(X, Y)zing Neuron Game Environment...")
+        self.neuron = None  # Initialize Neuron with default x and y
+        self.player = None # Initialize Player with default x and y
         self.game = self.Game()
         self.id = "noa/blueray-v0"
         self.reward_threshold = 200
@@ -20,6 +60,7 @@ class NeuronGameEnv(gym.Env):
         self.action_space = gym.spaces.Discrete(4)  # Example: 4 possible actions (up, down, left, right)
         self.observation_space = gym.spaces.Box(low=0, high=100, shape=(2,),
                                                 dtype=np.int32)  # Example: player x, y positions
+        return None
 
     class Neuron:
         def __init__(self, _x, _y):
@@ -55,6 +96,7 @@ class NeuronGameEnv(gym.Env):
                 if neuron.activated:
                     self.activated = True
             print(f"Player activation status: {self.activated}")
+            connect_to_neuron(action)
 
         def connect_to_neuron(self, neuron):
             self.connections.append(neuron)
@@ -64,11 +106,13 @@ class NeuronGameEnv(gym.Env):
 
     class Game:
         def __init__(self):
+            import random
             self.neurons = []
             self.player = None
             self.is_game_over = False
-            self.set_player = [random.randint(0, 100), random.randint(0, 100)]
+            self.player = self.set_player
             print("Game initialized.")
+
 
         def add_neuron(self, x, y):
             neuron = NeuronGameEnv.Neuron(x, y)
@@ -77,8 +121,12 @@ class NeuronGameEnv(gym.Env):
             return neuron
 
         def set_player(self, x, y):
-            self.player = self.player(x, y)
+            import random
+            x = random.randint(0, 100)
+            y = random.randint(0, 100)
+            self.player = NeuronGameEnv.Player(x, y)
             print(f"Player set at ({x}, {y}).")
+            return self.player
 
         def activate_neuron(self):
             random_neuron = random.choice(self.neurons)
@@ -125,7 +173,9 @@ class NeuronGameEnv(gym.Env):
     # Gym's `step()` function
     def step(self, action):
         if action == 0:
-            self.game.player.x += 1  # Example action: move right
+            self.game.player.x += 1
+            self.game.activate_neuron()  # Example: activate a random neuron
+            print(self.game.player.x)
         elif action == 1:
             self.game.player.x -= 1  # Example action: move left
         elif action == 2:
@@ -139,7 +189,8 @@ class NeuronGameEnv(gym.Env):
             else:
                 print("No neurons available to connect to.")
 
-        self.game.activate_neuron()  # Example: activate a random neuron
+        if random.random() < 0.5:  # 50% chance to activate a neuron
+            self.game.activate_neuron()
 
         # Calculate reward (simple example: reward for player being activated)
         reward = 1 if self.game.player.activated else -1
@@ -157,11 +208,3 @@ class NeuronGameEnv(gym.Env):
         # Clean up resources
         print("Closing environment.")
 
-
-
-X,Y,x,y = 0,0,0,0
-game = NeuronGameEnv(X,Y,x,y)
-
-for _ in range(100):
-    x, y = random.randint(0, 100), random.randint(0, 100)  # Generate random positions
-    game.add_neuron(x, y)
