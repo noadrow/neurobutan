@@ -138,8 +138,8 @@ class NeuronGameEnv(gym.Env):
             self.time_to_die = 60
             print(f"Player initialized at ({x}, {y})")
 
-        def update(self,action):
-            self.set_player(action['x'],action['y'])
+        def update(self,pos):
+            self.set_player(pos['x'],pos['y'])
             self.time_to_die -= 1
             if self.time_to_die < 0:
                 game.is_game_over = True
