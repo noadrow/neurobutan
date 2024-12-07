@@ -44,7 +44,8 @@ def plot_neuron_graph(game,action,neurons):
     # Add connections as edges
     for connected_neuron in game.player.connections:
         if connected_neuron:
-            G.add_edge((game.player.x, game.player.y), (connected_neuron.x, connected_neuron.y))
+            if game.player.activated:
+                G.add_edge((game.player.x, game.player.y), (connected_neuron.x, connected_neuron.y))
 
     for neuron in game.neurons:
         if (neuron.connections==[]):
@@ -52,17 +53,15 @@ def plot_neuron_graph(game,action,neurons):
         for connected_neuron in neuron.connections:
             G.add_edge((neuron.x, neuron.y), (connected_neuron.x, connected_neuron.y))
 
-
         # Set up the plot
         plt.figure(figsize=(8, 8))
 
         # Draw the graph with node positions
         pos = {(neuron.x, neuron.y): (neuron.x, neuron.y) for neuron in game.neurons}
 
-        data = {'activated': neuron.activated}
         if(random.random()<0.5):
             neuron.activate()
-        node_colors = ['yellow' if data['activated'] else 'gray' for _, data in G.nodes(data=True)]
+        node_colors = ['yellow' if data else 'gray' for _, data in G.nodes(data=True)]
         nx.draw(G, pos, with_labels=False, node_size=100, node_color=node_colors, edge_color='gray')
 
         # Plot the player
@@ -118,11 +117,13 @@ class NeuronGameEnv(gym.Env):
             self.x = x
             self.y = y
             self.connections = []
-            self.activated = False
+            self.activated = True
             self.time_to_die = 60
             print(f"Player initialized at ({x}, {y})")
 
-        def update(self,game):
+        def update(self,game,action):
+            x, y = action[0],action[1]
+            self.set_player(x, y)
             self.time_to_die -= 1
             if self.time_to_die < 0:
                 game.is_game_over = True
@@ -189,9 +190,6 @@ class NeuronGameEnv(gym.Env):
             return neuron
 
         def set_player(self, x, y):
-            import random
-            x = random.randint(0, 100)
-            y = random.randint(0, 100)
             self.player = NeuronGameEnv.Player(x, y)
             print(f"Player set at ({x}, {y}).")
             return self.player
@@ -243,22 +241,23 @@ class NeuronGameEnv(gym.Env):
             i = 0
             if action == 0:
                 self.player.x += 1
-                print(self.player.x)
+                return self.player.x,self.player.y
             elif action == 1:
                 self.player.x -= 1
-                print(self.player.x)
+                return self.player.x, self.player.y
                 # Example action: move left
             elif action == 2:
                 self.player.y += 1
-                print(self.player.y)
+                return self.player.x, self.player.y
                 # Example action: move up
             elif action == 3:
                 self.player.y -= 1
-                print(self.player.y)
+                return self.player.x, self.player.y
             elif action == 4:
                 if self.neurons:
                     random_neuron = random.choice(self.neurons)
                     self.player.connect_to_neuron(random_neuron)
+                    return self.player.x, self.player.y
                 else:
                     print("No neurons available to connect to.")
 
