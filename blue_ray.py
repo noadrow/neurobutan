@@ -89,6 +89,10 @@ class NeuronGameEnv(gym.Env):
                                                 dtype=np.int32)  # Example: player x, y positions
         return None
 
+    class reset:
+        def __init__(self,game):
+            return game.game_state()
+
     class Neuron:
         def __init__(self, _x, _y):
             self.x = _x
@@ -203,13 +207,12 @@ class NeuronGameEnv(gym.Env):
             neuron1.connect(neuron2)
             neuron2.connect(neuron1)
 
-        def reset(self,action):
+        def reset(self,x,y):
             for neuron in self.neurons:
                 neuron.activated = False
-                neuron.time_to_die -= 10
+                neuron.time_to_die = max(0, neuron.time_to_die - 10)
                 neuron.connections = []
-            action1, action2 = action[0],action[1]
-            self.player.activate(action1, action2 )
+            self.player.activate(x, y )
             print("Game reset.")
             return self.game_state()
 
@@ -236,8 +239,12 @@ class NeuronGameEnv(gym.Env):
             return np.array([self.game.player.x, self.game.player.y])
 
         # Gym's `step()` function
-        def step(self, action):
-            i = 0
+        def step(self, pos,action):
+            print(pos)
+            print(action)
+            x = pos['x']
+            y = pos['y']
+
             if action == 0:
                 self.player.x += 1
                 return self.player.x,self.player.y
