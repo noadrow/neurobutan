@@ -89,6 +89,12 @@ class NeuronGameEnv(gym.Env):
                                                 dtype=np.int32)  # Example: player x, y positions
         return None
 
+    class add_neurons:
+        def __init__(self,game,neurons):
+            game.neurons = neurons
+            return None
+
+
     class reset:
         def __init__(self,game):
             self.game = game
@@ -234,10 +240,10 @@ class NeuronGameEnv(gym.Env):
                     "activated": self.player["activated"],
                 },
                 "neurons": [{
-                    "x": neuron.x,
-                    "y": neuron.y,
-                    "activated": neuron.activated,
-                    "time_to_die": neuron.time_to_die
+                    "x": neuron["x"],
+                    "y": neuron["y"],
+                    "activated": neuron["activated"],
+                    "time_to_die": neuron["time_to_die"]
                 } for neuron in self.neurons],
                 "is_game_over": self.is_game_over,
             }
