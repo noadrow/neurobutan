@@ -29,12 +29,10 @@ def find_closest_neuron(player, neurons):
 
     return closest_neuron
 
-def plot_neuron_graph(game,action,neurons):
-    import matplotlib
+def plot_neuron_graph(game):
     import matplotlib.pyplot as plt
-    matplotlib.use('TkAgg')
     import networkx as nx
-    # Create a graph
+
     G = nx.Graph()
 
     # Add neurons as nodes to the graph
@@ -42,38 +40,35 @@ def plot_neuron_graph(game,action,neurons):
         G.add_node((neuron.x, neuron.y), activated=neuron.activated)
 
     # Add connections as edges
-    for connected_neuron in game.player.connections:
-        if connected_neuron:
-            if game.player.activated:
-                G.add_edge((game.player.x, game.player.y), (connected_neuron.x, connected_neuron.y))
-
     for neuron in game.neurons:
-        if (neuron.connections==[]):
-            neuron.connections = game.neurons[0],game.neurons[1]
         for connected_neuron in neuron.connections:
             G.add_edge((neuron.x, neuron.y), (connected_neuron.x, connected_neuron.y))
 
-        # Set up the plot
-        plt.figure(figsize=(8, 8))
+    node_colors = []
+    for node in G.nodes:
+        node_state = G.nodes[node].get('activated')
+        if node_state:
+            node_colors.append('yellow')
+        else:
+            node_colors.append('grey')
 
-        # Draw the graph with node positions
-        pos = {(neuron.x, neuron.y): (neuron.x, neuron.y) for neuron in game.neurons}
+    # Set up the plot
+    plt.figure(figsize=(8, 8))
 
-        if(random.random()<0.5):
-            neuron.activate()
-        node_colors = ['yellow' if data else 'gray' for _, data in G.nodes(data=True)]
-        nx.draw(G, pos, with_labels=False, node_size=100, node_color=node_colors, edge_color='gray')
+    # Draw the graph with node positions
+    pos = {(neuron.x, neuron.y): (neuron.x, neuron.y) for neuron in game.neurons}
+    nx.draw(G, pos, with_labels=False, node_size=100, node_color=node_colors, edge_color='gray')
 
-        # Plot the player
-        if game.player:
-            plt.scatter(game.player.x, game.player.y, color='purple', s=100, label='Player')
+    # Plot the player
+    if game.player:
+        plt.scatter(game.player.x, game.player.y, color='purple', s=100, label='Player')
 
-        # Show the plot
-        plt.title('Neuron Network with Player')
-        plt.xlabel('X Position')
-        plt.ylabel('Y Position')
-        plt.legend('Player')
-        plt.pause(100)
+    # Show the plot
+    plt.title('Neuron Network with Player')
+    plt.xlabel('X Position')
+    plt.ylabel('Y Position')
+    plt.legend()
+    plt.pause(100)
 
 # Define a custom environment for the game
 class NeuronGameEnv(gym.Env):
@@ -121,9 +116,8 @@ class NeuronGameEnv(gym.Env):
             self.time_to_die = 60
             print(f"Player initialized at ({x}, {y})")
 
-        def update(self,game,action):
-            x, y = action[0],action[1]
-            self.set_player(x, y)
+        def update(self,action):
+            self.set_player(action['x'],action['y'])
             self.time_to_die -= 1
             if self.time_to_die < 0:
                 game.is_game_over = True
@@ -176,11 +170,11 @@ class NeuronGameEnv(gym.Env):
             self.neurons = []
             self.player = None
             self.is_game_over = False
-            self.player = self.set_player
+            self.player = None
             print("Game initialized.")
 
-        def render(self,action,neurons):
-            plot_neuron_graph(self,action,neurons)
+        def render(self):
+            plot_neuron_graph(self)
             print(f"Game State: {self.is_game_over}")
 
         def add_neuron(self, x, y):
@@ -190,7 +184,12 @@ class NeuronGameEnv(gym.Env):
             return neuron
 
         def set_player(self, x, y):
-            self.player = NeuronGameEnv.Player(x, y)
+
+            self.player = {"x":x,"y":y}
+
+            #redudent but readable
+            self.player["x"] = x
+            self.player["y"] = y
             print(f"Player set at ({x}, {y}).")
             return self.player
 

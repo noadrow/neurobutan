@@ -2,7 +2,7 @@ import random
 from blue_ray import NeuronGameEnv, plot_neuron_graph
 import time
 
-env = [0, 0, 0, 0]
+env = [0, 0, 50, 50]
 if __name__ == "__main__":
     try:
         timer = 60
@@ -18,26 +18,29 @@ if __name__ == "__main__":
             game.add_neuron(_x, _y)
 
         # Visualize the game
-        action = [0, 0]
+        action = {'x': 50, 'y': 50}
         state = False
         while not state:
             neurons = game.neurons
-            if(timer > 0):
-                action = game.step(4)
-            else:
-                timer -= 10
-            game.render(action,neurons)
+            state = game.player.update(action)
 
-        game.reset(action)
-        game.close()
+            game.reset(action)
+            game.render()
+            timer -= 10
+
+            if(timer > 0):
+                action = game.step(action={50,50})
+            else:
+                game.close()
+
+
 
     except NameError as e:
-        state = game.player.update(action[0], action[1])
 
         print(f"Error: {e}")
     except Exception as ex:
         print(f"An error occurred: {ex}")
 
     finally:
-        print("well done!")
+        print("system failed succsessfully!")
 
