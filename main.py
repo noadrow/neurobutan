@@ -16,11 +16,16 @@ if __name__ == "__main__":
             game.add_neuron(_x, _y)
 
         # Visualize the game
+        action = [50, 50]
         while True:
-            plot_neuron_graph(game)
-            game.reset()
+            action = action
+            neurons = game.neurons
+            game.reset(action,neurons)
+            game.render()
 
-        print("NeuronGameEnv initialized successfully!")
+        print("well done!")
+        game.close()
+
     except NameError as e:
         print(f"Error: {e}")
     except Exception as ex:

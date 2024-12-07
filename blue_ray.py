@@ -4,6 +4,31 @@ import numpy as np
 from networkx import interval_graph
 
 print('loading blue_ray')
+neurons = []
+
+def find_closest_neuron(player, neurons):
+    """
+    Find the closest neuron to the player's position.
+
+    Args:
+        player (Player): The player object with x, y coordinates.
+        neurons (list of Neuron): The list of all neuron objects in the game.
+
+    Returns:
+        Neuron: The neuron closest to the player's position.
+    """
+    closest_neuron = None
+    min_distance = float('inf')  # Start with an infinitely large distance
+
+    for neuron in neurons:
+        # Calculate the squared Euclidean distance
+        distance = (neuron.x - player.x) ** 2 + (neuron.y - player.y) ** 2
+        if distance < min_distance:
+            min_distance = distance
+            closest_neuron = neuron
+
+    return closest_neuron
+
 
 def plot_neuron_graph(game):
     import matplotlib
@@ -29,8 +54,10 @@ def plot_neuron_graph(game):
 
     # Draw the graph with node positions
     pos = {(neuron.x, neuron.y): (neuron.x, neuron.y) for neuron in game.neurons}
-    nx.draw(G, pos, with_labels=False, node_size=100, node_color='yellow' if neuron.activated else 'gray',
-            edge_color='gray')
+
+    data = {'activated':neuron.activated}
+    node_colors = ['yellow' if data['activated'] else 'gray' for _, data in G.nodes(data=True)]
+    nx.draw(G, pos, with_labels=False, node_size=100, node_color=node_colors, edge_color='gray')
 
     # Plot the player
     if game.player:
@@ -96,7 +123,31 @@ class NeuronGameEnv(gym.Env):
                 if neuron.activated:
                     self.activated = True
             print(f"Player activation status: {self.activated}")
-            connect_to_neuron(action)
+            closest_neuron = self.connect_to_nearest_neuron(neurons)
+            self.connections.append(closest_neuron)
+
+        def find_closest_neuron(player, neurons):
+            """
+            Find the closest neuron to the player's position.
+
+            Args:
+                player (Player): The player object with x, y coordinates.
+                neurons (list of Neuron): The list of all neuron objects in the game.
+
+            Returns:
+                Neuron: The neuron closest to the player's position.
+            """
+            closest_neuron = None
+            min_distance = float('inf')  # Start with an infinitely large distance
+
+            for neuron in neurons:
+                # Calculate the squared Euclidean distance
+                distance = (neuron.x - player.x) ** 2 + (neuron.y - player.y) ** 2
+                if distance < min_distance:
+                    min_distance = distance
+                    closest_neuron = neuron
+
+            return closest_neuron
 
         def connect_to_neuron(self, neuron):
             self.connections.append(neuron)
@@ -113,11 +164,13 @@ class NeuronGameEnv(gym.Env):
             self.player = self.set_player
             print("Game initialized.")
 
+        def render(self):
+            plot_neuron_graph(self)
 
         def add_neuron(self, x, y):
             neuron = NeuronGameEnv.Neuron(x, y)
             self.neurons.append(neuron)
-            print(f"Neuron added at ({x}, {y}). Total neurons: {len(self.neurons)}")
+            #print(f"Neuron added at ({x}, {y}). Total neurons: {len(self.neurons)}")
             return neuron
 
         def set_player(self, x, y):
@@ -138,13 +191,14 @@ class NeuronGameEnv(gym.Env):
             neuron1.connect(neuron2)
             neuron2.connect(neuron1)
 
-        def reset(self):
+        def reset(self,action,neurons):
             self.is_game_over = False
             for neuron in self.neurons:
                 neuron.activated = False
                 neuron.time_to_die = 30
                 neuron.connections = []
-            self.player.activate()
+            action1, action2 = action[0],action[1]
+            self.player.activate(action1,action2)
             print("Game reset.")
             return self.game_state()
 
@@ -166,22 +220,29 @@ class NeuronGameEnv(gym.Env):
             return state
 
     # Gym's `reset()` function
-    def reset(self):
-        self.game.reset()
+    def reset(self,action):
+        print(self.game.reset(action))
         return np.array([self.game.player.x, self.game.player.y])
 
     # Gym's `step()` function
     def step(self, action):
+        i = 0
+        print(f"step {i}")
         if action == 0:
             self.game.player.x += 1
             self.game.activate_neuron()  # Example: activate a random neuron
             print(self.game.player.x)
         elif action == 1:
-            self.game.player.x -= 1  # Example action: move left
+            self.game.player.x -= 1
+            print(self.game.player.x)
+            # Example action: move left
         elif action == 2:
-            self.game.player.y += 1  # Example action: move up
+            self.game.player.y += 1
+            print(self.game.player.y)
+            # Example action: move up
         elif action == 3:
             self.game.player.y -= 1
+            print(self.game.player.y)
         elif action == 4:
             if self.game.neurons:
                 random_neuron = random.choice(self.game.neurons)
@@ -200,8 +261,8 @@ class NeuronGameEnv(gym.Env):
         return np.array([self.game.player.x, self.game.player.y]), reward, done, {}
 
     def render(self):
-        # Optional: render the game state visually
-        print(f"Player is at ({self.game.player.x}, {self.game.player.y})")
+        plot_neuron_graph(self.game)
+        print(f"Player 'mouse' is at ({self.game.player.x}, {self.game.player.y})")
         print(f"Game over: {self.game.is_game_over}")
 
     def close(self):
