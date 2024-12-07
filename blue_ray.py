@@ -123,7 +123,7 @@ class NeuronGameEnv(gym.Env):
                 if neuron.activated:
                     self.activated = True
             print(f"Player activation status: {self.activated}")
-            closest_neuron = self.connect_to_nearest_neuron(neurons)
+            closest_neuron = self.find_closest_neuron(neurons)
             self.connections.append(closest_neuron)
 
         def find_closest_neuron(player, neurons):
@@ -198,7 +198,7 @@ class NeuronGameEnv(gym.Env):
                 neuron.time_to_die = 30
                 neuron.connections = []
             action1, action2 = action[0],action[1]
-            self.player.activate(action1,action2)
+            self.player.activate()
             print("Game reset.")
             return self.game_state()
 
