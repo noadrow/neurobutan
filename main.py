@@ -29,4 +29,5 @@ if __name__ == "__main__":
         except Exception as e:
             print("Error during reset:", e)
     finally:
+        game.render()
         print("succsess!")

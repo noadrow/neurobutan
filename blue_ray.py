@@ -61,7 +61,7 @@ def plot_neuron_graph(game):
 
     # Plot the player
     if game.player:
-        plt.scatter(game.player.x, game.player.y, color='purple', s=100, label='Player')
+        plt.scatter(game.player['x'], game.player['y'], color='purple', s=100, label='Player')
 
     # Show the plot
     plt.title('Neuron Network with Player')
@@ -184,6 +184,7 @@ class NeuronGameEnv(gym.Env):
 
         def set_game_state(self,state):
             self.is_game_over = state
+
         def render(self):
             plot_neuron_graph(self)
             print(f"Game State: {self.is_game_over}")
