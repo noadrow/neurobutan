@@ -18,10 +18,10 @@ if __name__ == "__main__":
         # Visualize the game
         action = [50, 50]
         while True:
-            action = action
+            print(action)
             neurons = game.neurons
             game.reset(action,neurons)
-            game.render()
+            game.render(action,neurons)
 
         print("well done!")
         game.close()

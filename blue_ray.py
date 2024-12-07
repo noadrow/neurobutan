@@ -29,8 +29,7 @@ def find_closest_neuron(player, neurons):
 
     return closest_neuron
 
-
-def plot_neuron_graph(game):
+def plot_neuron_graph(game,action,neurons):
     import matplotlib
     import matplotlib.pyplot as plt
     matplotlib.use('TkAgg')
@@ -43,38 +42,45 @@ def plot_neuron_graph(game):
         G.add_node((neuron.x, neuron.y), activated=neuron.activated)
 
     # Add connections as edges
+    for connected_neuron in game.player.connections:
+        if connected_neuron:
+            G.add_edge((game.player.x, game.player.y), (connected_neuron.x, connected_neuron.y))
+
     for neuron in game.neurons:
         if (neuron.connections==[]):
             neuron.connections = game.neurons[0],game.neurons[1]
         for connected_neuron in neuron.connections:
             G.add_edge((neuron.x, neuron.y), (connected_neuron.x, connected_neuron.y))
 
-    # Set up the plot
-    plt.figure(figsize=(8, 8))
 
-    # Draw the graph with node positions
-    pos = {(neuron.x, neuron.y): (neuron.x, neuron.y) for neuron in game.neurons}
+        # Set up the plot
+        plt.figure(figsize=(8, 8))
 
-    data = {'activated':neuron.activated}
-    node_colors = ['yellow' if data['activated'] else 'gray' for _, data in G.nodes(data=True)]
-    nx.draw(G, pos, with_labels=False, node_size=100, node_color=node_colors, edge_color='gray')
+        # Draw the graph with node positions
+        pos = {(neuron.x, neuron.y): (neuron.x, neuron.y) for neuron in game.neurons}
 
-    # Plot the player
-    if game.player:
-        plt.scatter(game.player.x, game.player.y, color='purple', s=100, label='Player')
+        data = {'activated': neuron.activated}
+        if(random.random()<0.5):
+            neuron.activate()
+        node_colors = ['yellow' if data['activated'] else 'gray' for _, data in G.nodes(data=True)]
+        nx.draw(G, pos, with_labels=False, node_size=100, node_color=node_colors, edge_color='gray')
 
-    # Show the plot
-    plt.title('Neuron Network with Player')
-    plt.xlabel('X Position')
-    plt.ylabel('Y Position')
-    plt.legend('Player')
-    plt.pause(100)
+        # Plot the player
+        if game.player:
+            plt.scatter(game.player.x, game.player.y, color='purple', s=100, label='Player')
+
+        # Show the plot
+        plt.title('Neuron Network with Player')
+        plt.xlabel('X Position')
+        plt.ylabel('Y Position')
+        plt.legend('Player')
+        plt.pause(100)
 
 # Define a custom environment for the game
 class NeuronGameEnv(gym.Env):
     def __init__(self):
         super().__init__()
-        print("Initialiself.Neuron(X, Y)zing Neuron Game Environment...")
+        print("Initialise Neuron Game Environment...")
         self.neuron = None  # Initialize Neuron with default x and y
         self.player = None # Initialize Player with default x and y
         self.game = self.Game()
@@ -96,16 +102,13 @@ class NeuronGameEnv(gym.Env):
             self.connections = []
             self.activated = False
             self.time_to_die = 30
-            print(f"Created Neuron at ({_x}, {_y})")
 
         def activate(self):
             self.activated = True
             self.time_to_die += 10
-            print(f"Neuron at ({self.x}, {self.y}) activated. Time to die increased to {self.time_to_die}.")
 
         def connect(self, _neuron):
             self.connections.append(_neuron)
-            print(f"Neuron at ({self.x}, {self.y}) connected to Neuron at ({_neuron.x}, {_neuron.y}).")
 
         def is_alive(self):
             return self.time_to_die > 0
@@ -116,6 +119,7 @@ class NeuronGameEnv(gym.Env):
             self.y = y
             self.connections = []
             self.activated = False
+            self.time_to_die = 60
             print(f"Player initialized at ({x}, {y})")
 
         def activate(self):
@@ -123,6 +127,8 @@ class NeuronGameEnv(gym.Env):
                 if neuron.activated:
                     self.activated = True
             print(f"Player activation status: {self.activated}")
+            self.time_to_die += 10
+            print(f"Player time_to_die: {self.time_to_die}")
             closest_neuron = self.find_closest_neuron(neurons)
             self.connections.append(closest_neuron)
 
@@ -164,8 +170,8 @@ class NeuronGameEnv(gym.Env):
             self.player = self.set_player
             print("Game initialized.")
 
-        def render(self):
-            plot_neuron_graph(self)
+        def render(self,action,neurons):
+            plot_neuron_graph(self,action,neurons)
 
         def add_neuron(self, x, y):
             neuron = NeuronGameEnv.Neuron(x, y)
