@@ -1,26 +1,26 @@
 import random
 from blue_ray import NeuronGameEnv
-import time
 
 timer = 60
 
 def input_system(action):
+    global timer
     # Player input and action logic
-    if action == 0:  # Move upneurons
+    if action == 0:
         state_log["player"]["x"] = sorted_neurons[0]['x']
         state_log["player"]["y"] = sorted_neurons[0]['y']
-    elif action == 1:  # Move down
+    elif action == 1:
         state_log["player"]["x"] = sorted_neurons[1]['x']
         state_log["player"]["y"] = sorted_neurons[1]['y']
-    elif action == 2:  # Move left
+    elif action == 2:
         state_log["player"]["x"] = sorted_neurons[2]['x']
         state_log["player"]["y"] = sorted_neurons[2]['y']
-    elif action == 3:  # Move right
-        sstate_log["player"]["x"] = sorted_neurons[3]['x']
+    elif action == 3:
+        state_log["player"]["x"] = sorted_neurons[3]['x']
         state_log["player"]["y"] = sorted_neurons[3]['y']
 
     game.player.update(state_log["player"])
-    game.render(neurons)
+    #game.render(neurons)
 
     if state_log['player']['activated']:
         timer += 0.1
@@ -92,31 +92,9 @@ while game_running:
     action = ai_agent(state_log)
     input_system(action)
 
-if __name__ == "__main__":
-    try:
-        import gym
-        import random
-
-        # Example custom environment
-        from blue_ray import NeuronGameEnv  # Replace with your custom environment if needed
-
-        # Initialize the environment
-        env = NeuronGameEnv()
-        state = env.reset()  # Get initial state
-
-
-        # Example AI agent (can be replaced with a trained policy model)
-        def ai_agent(state):
-            # Logic for selecting an action; replace with a model if needed
-            # For example, if actions are discrete integers:
-            return env.action_space.sample()  # Random action for demonstration
-
-
-        # Main loop
-        done = False
-        while not done:
-            # Get action from AI agent
-            action = ai_agent(state)
+    if __name__ == "__main__":
+        try:
+            print("ok")
 
             # Perform the action
             next_state, reward, done, info = env.step(action)
@@ -128,5 +106,9 @@ if __name__ == "__main__":
             # Update state
             state = next_state
 
-    finally:
-        print("succsess!")
+        except:
+
+
+            print("succsess!")
+
+

@@ -3,8 +3,11 @@ import random
 import numpy as np
 from networkx import interval_graph
 
+
+
 print('loading blue_ray')
 neurons = []
+state_log = {}
 
 def find_closest_neuron(player, neurons):
     """
@@ -298,7 +301,7 @@ class NeuronGameEnv(gym.Env):
             done = self.is_game_over
 
             # Return new state (position of player) and reward
-            return np.array([self.player.x, self.player.y]), reward, done, {}
+            return np.array([self.player.x, self.player.y]), reward, done, state_log
 
         def close(self):
             # Clean up resources
