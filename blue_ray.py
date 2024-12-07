@@ -114,13 +114,19 @@ class NeuronGameEnv(gym.Env):
             return self.time_to_die > 0
 
     class Player:
-        def __init__(self, x, y):
+        def __init__(self,x, y):
             self.x = x
             self.y = y
             self.connections = []
             self.activated = False
             self.time_to_die = 60
             print(f"Player initialized at ({x}, {y})")
+
+        def update(self,game):
+            self.time_to_die -= 1
+            if self.time_to_die < 0:
+                game.is_game_over = True
+            return game.is_game_over
 
         def activate(self):
             for neuron in self.connections:
@@ -172,6 +178,7 @@ class NeuronGameEnv(gym.Env):
 
         def render(self,action,neurons):
             plot_neuron_graph(self,action,neurons)
+            print(f"Game State: {self.is_game_over}")
 
         def add_neuron(self, x, y):
             neuron = NeuronGameEnv.Neuron(x, y)
@@ -197,8 +204,7 @@ class NeuronGameEnv(gym.Env):
             neuron1.connect(neuron2)
             neuron2.connect(neuron1)
 
-        def reset(self,action,neurons):
-            self.is_game_over = False
+        def reset(self,action):
             for neuron in self.neurons:
                 neuron.activated = False
                 neuron.time_to_die = 30
@@ -225,53 +231,46 @@ class NeuronGameEnv(gym.Env):
             }
             return state
 
-    # Gym's `reset()` function
-    def reset(self,action):
-        print(self.game.reset(action))
-        return np.array([self.game.player.x, self.game.player.y])
+        # Gym's `reset()` function
+        def reset(self,action):
+            print(self.reset(action))
+            return np.array([self.game.player.x, self.game.player.y])
 
-    # Gym's `step()` function
-    def step(self, action):
-        i = 0
-        print(f"step {i}")
-        if action == 0:
-            self.game.player.x += 1
-            self.game.activate_neuron()  # Example: activate a random neuron
-            print(self.game.player.x)
-        elif action == 1:
-            self.game.player.x -= 1
-            print(self.game.player.x)
-            # Example action: move left
-        elif action == 2:
-            self.game.player.y += 1
-            print(self.game.player.y)
-            # Example action: move up
-        elif action == 3:
-            self.game.player.y -= 1
-            print(self.game.player.y)
-        elif action == 4:
-            if self.game.neurons:
-                random_neuron = random.choice(self.game.neurons)
-                self.game.player.connect_to_neuron(random_neuron)
-            else:
-                print("No neurons available to connect to.")
+        # Gym's `step()` function
+        def step(self, action):
+            i = 0
+            if action == 0:
+                self.player.x += 1
+                print(self.player.x)
+            elif action == 1:
+                self.player.x -= 1
+                print(self.player.x)
+                # Example action: move left
+            elif action == 2:
+                self.player.y += 1
+                print(self.player.y)
+                # Example action: move up
+            elif action == 3:
+                self.player.y -= 1
+                print(self.player.y)
+            elif action == 4:
+                if self.neurons:
+                    random_neuron = random.choice(self.neurons)
+                    self.player.connect_to_neuron(random_neuron)
+                else:
+                    print("No neurons available to connect to.")
 
-        if random.random() < 0.5:  # 50% chance to activate a neuron
-            self.game.activate_neuron()
+            if random.random() < 0.5:  # 50% chance to activate a neuron
+                self.activate_neuron()
 
-        # Calculate reward (simple example: reward for player being activated)
-        reward = 1 if self.game.player.activated else -1
-        done = self.game.is_game_over
+            # Calculate reward (simple example: reward for player being activated)
+            reward = 1 if self.player.activated else -1
+            done = self.is_game_over
 
-        # Return new state (position of player) and reward
-        return np.array([self.game.player.x, self.game.player.y]), reward, done, {}
+            # Return new state (position of player) and reward
+            return np.array([self.player.x, self.player.y]), reward, done, {}
 
-    def render(self):
-        plot_neuron_graph(self.game)
-        print(f"Player 'mouse' is at ({self.game.player.x}, {self.game.player.y})")
-        print(f"Game over: {self.game.is_game_over}")
-
-    def close(self):
-        # Clean up resources
-        print("Closing environment.")
+        def close(self):
+            # Clean up resources
+            print("Closing environment.")
 
