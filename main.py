@@ -35,15 +35,29 @@ if __name__ == "__main__":
             state_log = picture.get_state()
             game_running = not state_log['is_game_over']
             print("Game state after reset:", state_log)
+
+            # Random connection update for neurons
+            for neuron in neurons:
+                random_neuron = random.choice([n for n in neurons if n != neuron])  # Choose a different random neuron
+                if "connections" not in neuron:
+                    neuron["connections"] = []  # Initialize connections if not already present
+                if random_neuron not in neuron["connections"]:  # Avoid duplicate connections
+                    neuron["connections"].append(random_neuron)
+                    print(f"Neuron {neuron} connected to {random_neuron}.")
+
+            # Render the updated neurons and game state
+            env.update_neurons(neurons=neurons,game=game)  # Assuming a method `update_neurons` exists
+            game.render(neurons)
+
             if state_log['player']['activated']:
-                timer += 1
+                timer += 0.1
             else:
-                timer -= 1
+                game.render(neurons)
+                timer -= 0.1
 
             if timer <= 0:
                 print("game over")
                 game.set_game_state(True)
-        game.render()
 
     finally:
         print("succsess!")

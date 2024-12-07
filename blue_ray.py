@@ -29,7 +29,7 @@ def find_closest_neuron(player, neurons):
 
     return closest_neuron
 
-def plot_neuron_graph(game):
+def plot_neuron_graph(game,neurons):
     import matplotlib.pyplot as plt
     import networkx as nx
 
@@ -37,12 +37,14 @@ def plot_neuron_graph(game):
 
     # Add neurons as nodes to the graph
     for neuron in game.neurons:
-        G.add_node((neuron.x, neuron.y), activated=neuron.activated)
+        G.add_node((neuron['x'], neuron['y']), activated=neuron['activated'])
 
     # Add connections as edges
     for neuron in game.neurons:
-        for connected_neuron in neuron.connections:
-            G.add_edge((neuron.x, neuron.y), (connected_neuron.x, connected_neuron.y))
+        if not neurons == []:
+            for connected_neuron in neurons:
+                for _neuron in connected_neuron['connections']:
+                    G.add_edge((neuron['x'], neuron['y']), (connected_neuron['x'], connected_neuron['y']))
 
     node_colors = []
     for node in G.nodes:
@@ -56,7 +58,7 @@ def plot_neuron_graph(game):
     plt.figure(figsize=(8, 8))
 
     # Draw the graph with node positions
-    pos = {(neuron.x, neuron.y): (neuron.x, neuron.y) for neuron in game.neurons}
+    pos = {(neuron['x'], neuron['y']): (neuron['x'], neuron['y']) for neuron in game.neurons}
     nx.draw(G, pos, with_labels=False, node_size=100, node_color=node_colors, edge_color='gray')
 
     # Plot the player
@@ -88,6 +90,11 @@ class NeuronGameEnv(gym.Env):
         self.observation_space = gym.spaces.Box(low=0, high=100, shape=(2,),
                                                 dtype=np.int32)  # Example: player x, y positions
         return None
+
+    class update_neurons:
+        def __init__(self,game,neurons):
+            game.neurons = neurons
+            return None
 
     class add_neurons:
         def __init__(self,game,neurons):
@@ -191,8 +198,8 @@ class NeuronGameEnv(gym.Env):
         def set_game_state(self,state):
             self.is_game_over = state
 
-        def render(self):
-            plot_neuron_graph(self)
+        def render(self,neurons):
+            plot_neuron_graph(self,neurons)
             print(f"Game State: {self.is_game_over}")
 
         def add_neuron(self, x, y):
