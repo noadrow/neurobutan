@@ -128,7 +128,9 @@ class NeuronGameEnv(gym.Env):
                 game.is_game_over = True
             return game.is_game_over
 
-        def activate(self):
+        def activate(self,action1,action2):
+            self.player.x = action1
+            self.player.y = action2
             for neuron in self.connections:
                 if neuron.activated:
                     self.activated = True
@@ -207,10 +209,10 @@ class NeuronGameEnv(gym.Env):
         def reset(self,action):
             for neuron in self.neurons:
                 neuron.activated = False
-                neuron.time_to_die = 30
+                neuron.time_to_die -= 10
                 neuron.connections = []
             action1, action2 = action[0],action[1]
-            self.player.activate()
+            self.player.activate(action1, action2 )
             print("Game reset.")
             return self.game_state()
 

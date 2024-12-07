@@ -24,12 +24,12 @@ if __name__ == "__main__":
             state = game.player.update(game)
             game.step(action)
             game.render(action,neurons)
-            game.reset(action)
 
         print("well done!")
         game.close()
 
     except NameError as e:
+        game.reset(action)
 
         print(f"Error: {e}")
     except Exception as ex:
