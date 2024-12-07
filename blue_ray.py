@@ -91,7 +91,12 @@ class NeuronGameEnv(gym.Env):
 
     class reset:
         def __init__(self,game):
-            return game.game_state()
+            self.game = game
+            return None
+
+        def get_state(self):
+            return self.game.game_state()
+
 
     class Neuron:
         def __init__(self, _x, _y):
@@ -177,6 +182,8 @@ class NeuronGameEnv(gym.Env):
             self.player = None
             print("Game initialized.")
 
+        def set_game_state(self,state):
+            self.is_game_over = state
         def render(self):
             plot_neuron_graph(self)
             print(f"Game State: {self.is_game_over}")
@@ -217,11 +224,13 @@ class NeuronGameEnv(gym.Env):
             return self.game_state()
 
         def game_state(self):
+            if(not self.player):
+                self.player = {'x':50,'y':50,'activated':False}
             state = {
                 "player": {
-                    "x": self.player.x,
-                    "y": self.player.y,
-                    "activated": self.player.activated,
+                    "x": self.player["x"],
+                    "y": self.player["y"],
+                    "activated": self.player["activated"],
                 },
                 "neurons": [{
                     "x": neuron.x,

@@ -11,8 +11,21 @@ if __name__ == "__main__":
         pos = {"x": 50, "y": 50}
 
         try:
-            state = env.reset(game)
-            print("Game state after reset:", state)
+            game_running = True
+            while game_running:
+                picture = env.reset(game)
+                state_log = picture.get_state()
+                game_running = not state_log['is_game_over']
+                print("Game state after reset:", state_log)
+                if state_log['player']['activated']:
+                    timer += 1
+                else:
+                    timer -= 1
+
+                if timer <= 0:
+                    print("game over")
+                    game.set_game_state(True)
+
         except Exception as e:
             print("Error during reset:", e)
     finally:
