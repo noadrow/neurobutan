@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neuron Game</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: black;
+    }
+    canvas {
+      display: block;
+    }
+    #game-over {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 2em;
+      display: none;
+      text-align: center;
+    }
+    #timer{
+      color: white;
+    }
+  </style>
+</head>
+<body>
+<div id="timer">Survivle time <span id="time">01:00</span> minutes!</div>
+<canvas></canvas>
+<div id="game-over">
+  <p>Game Over!</p>
+</div>
+<script>
+  const gameOverScreen = document.getElementById('game-over');
+  const canvas = document.querySelector('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  let neurons = [];
+  let timer = 30;
+
+  class Neuron {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+      this.connection = [];
+      this.activated = false;
+      this.time_to_die = 30;
+    }
+
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, 10, 0, Math.PI * 2);
+      ctx.fillStyle = 'white';
+      ctx.fill();
+      ctx.closePath();
+    }
+    activate(){
+      this.activated = true;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, 10, 0, Math.PI * 2);
+      ctx.fillStyle = 'yellow';
+      ctx.fill();
+      ctx.closePath();
+      this.time_to_die += 10;
+    }
+
+    startTimer() {
+      var self = this;
+        setInterval(function () {
+        if (--self.time_to_die < 0) {
+          self.time_to_die = 0;
+        }
+    }, 1000);
+}
+  }
+
+  class Player {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+      this.connection = [];
+      this.activated = false;
+    }
+
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, 10, 0, Math.PI * 2);
+      ctx.fillStyle = 'purple';
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    connect(clickedNeuron){
+      this.connection.push(clickedNeuron);
+      ctx.beginPath();
+      ctx.moveTo(this.x, this.y);
+      ctx.lineTo(clickedNeuron.x, clickedNeuron.y);
+      ctx.strokeStyle = 'gray';
+      ctx.stroke();
+      ctx.closePath();
+      if(clickedNeuron.activated){
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 10, 0, Math.PI * 2);
+        ctx.fillStyle = 'yellow';
+        ctx.fill();
+        ctx.closePath();
+        this.activated = true;
+        timer += 5;
+      }
+
+    }
+  }
+
+  canvas.addEventListener('click', e => {
+    const { clientX, clientY } = e;
+    const clickedNeuron = neurons.find(n => {
+      const dx = clientX - n.x - 10;
+      const dy = clientY - n.y - 10;
+      return Math.sqrt(dx * dx + dy * dy) < 20;
+    });
+
+    if (clickedNeuron && clickedNeuron.connection.length === 0) {
+      player.connect(clickedNeuron);
+    }
+  });
+
+  function spawnNeuron(x, y) {
+    const neuron = new Neuron(x, y);
+    neurons.push(neuron);
+    return neuron;
+  }
+
+  for (let i = 0; i < 10; i++) {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      spawnNeuron(x, y);
+    }
+    neurons.forEach(neuron => neuron.draw());
+    neurons.forEach(neuron => neuron.startTimer());
+  
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height;
+    const player = new Player(x, y);
+    player.draw();
+
+  function create_connection(){
+      // Shuffle array
+      const shuffled = neurons.sort(() => 0.5 - Math.random());
+
+      // Get sub-array of first n elements after shuffled
+      let selected = shuffled.slice(0, 2);
+      
+      ctx.beginPath();
+      ctx.moveTo(selected[0].x, selected[0].y);
+      ctx.lineTo(selected[1].x, selected[1].y);
+      ctx.strokeStyle = 'gray';
+      ctx.stroke();
+      ctx.closePath();
+
+      selected[0].connection.push(selected[1]);
+      selected[1].connection.push(selected[0]);
+
+  }
+
+  function reset_screen(){
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    neurons.forEach(neuron => neuron.draw());
+    neurons.forEach(neuron => neuron.connection = []);
+    neurons.forEach(neuron => neuron.activated = false);
+    player.activated = false;
+    player.draw();
+    neurons.forEach(neuron => {
+      if (neuron.time_to_die === 0) {
+        // Remove all properties of the neuron object
+        for (let key in neuron) {
+          delete neuron[key];
+        }
+      }
+    });
+    // Filter out neurons with time_to_die === 0
+  neurons = neurons.filter(neuron => neuron.time_to_die > 0);
+  }
+
+  function activate_neuron(){
+    // Shuffle array
+    const shuffled = neurons.sort(() => 0.5 - Math.random());
+
+    // Get sub-array of first n elements after shuffled
+    let selected = shuffled.slice(0, 1);
+
+    selected[0].activate();
+    selected[0].connection.forEach(neuron => neuron.activate());
+  }
+
+    setInterval(create_connection,1000);
+    setInterval(reset_screen, 5000);
+    setInterval(activate_neuron, 3000);
+
+    function startTimer(display) {
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+            gameOverScreen.style.display = 'block';
+        }
+    }, 1000);
+}
+
+
+
+    display = document.querySelector('#time');
+    startTimer(display);
+
+</script>
+</body>
+</html>
