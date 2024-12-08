@@ -198,6 +198,13 @@ class NeuronGameEnv(gym.Env):
             self.player = None
             print("Game initialized.")
 
+        def set_action(self,action):
+            self.next_state = self.step(action)
+            self.reward = 1
+            self.done = self.is_game_over
+            self.info = state_log
+            return self.next_state,self.reward,self.done,self.info
+
         def set_game_state(self,state):
             self.is_game_over = state
 
@@ -265,31 +272,28 @@ class NeuronGameEnv(gym.Env):
             return np.array([self.game.player.x, self.game.player.y])
 
         # Gym's `step()` function
-        def step(self, pos,action):
-            print(pos)
-            print(action)
-            x = pos['x']
-            y = pos['y']
+        def step(self,action):
+            if(not self.player):
+                self.player = {'x':50,'y':50}
 
             if action == 0:
-                self.player.x += 1
-                return self.player.x,self.player.y
+                self.player['x'] += 1
+                return self.player
             elif action == 1:
-                self.player.x -= 1
-                return self.player.x, self.player.y
-                # Example action: move left
+                self.player['x'] -= 1
+                return self.player
             elif action == 2:
-                self.player.y += 1
-                return self.player.x, self.player.y
+                self.player['y'] += 1
+                return self.player
                 # Example action: move up
             elif action == 3:
-                self.player.y -= 1
-                return self.player.x, self.player.y
+                self.player['y'] -= 1
+                return self.player
             elif action == 4:
                 if self.neurons:
                     random_neuron = random.choice(self.neurons)
                     self.player.connect_to_neuron(random_neuron)
-                    return self.player.x, self.player.y
+                    return self.player
                 else:
                     print("No neurons available to connect to.")
 

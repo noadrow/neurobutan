@@ -3,21 +3,17 @@ from blue_ray import NeuronGameEnv
 
 timer = 60
 
-def input_system(action):
+def input_system(action,game):
     global timer
     # Player input and action logic
     if action == 0:
-        state_log["player"]["x"] = sorted_neurons[0]['x']
-        state_log["player"]["y"] = sorted_neurons[0]['y']
+        game.player.connect_to_neuron(sorted_neurons[0])
     elif action == 1:
-        state_log["player"]["x"] = sorted_neurons[1]['x']
-        state_log["player"]["y"] = sorted_neurons[1]['y']
+        game.player.connect_to_neuron(sorted_neurons[1])
     elif action == 2:
-        state_log["player"]["x"] = sorted_neurons[2]['x']
-        state_log["player"]["y"] = sorted_neurons[2]['y']
+        game.player.connect_to_neuron(sorted_neurons[2])
     elif action == 3:
-        state_log["player"]["x"] = sorted_neurons[3]['x']
-        state_log["player"]["y"] = sorted_neurons[3]['y']
+        game.player.connect_to_neuron(sorted_neurons[3])
 
     game.player.update(state_log["player"])
     #game.render(neurons)
@@ -63,7 +59,7 @@ game_running = True
 while game_running:
     picture = env.reset(game)
     state_log = picture.get_state()
-    game_running = state_log['is_game_over']
+    game_running = not state_log['is_game_over']
     print("Game state after reset:", state_log)
 
     # Random connection update for neurons
@@ -90,25 +86,20 @@ while game_running:
         key=lambda neuron: ((neuron["x"] - player_x) ** 2 + (neuron["y"] - player_y) ** 2) ** 0.5
     )
     action = ai_agent(state_log)
-    input_system(action)
+    input_system(action,game)
+
+    # Perform the action
+    next_state, reward, done, info = env.game.set_action(action)
+
+    # Print details
+    print(f"Action Taken: {action}")
+    print(f"New State: {next_state}, Reward: {reward}, Done: {done}")
 
     if __name__ == "__main__":
         try:
             print("ok")
 
-            # Perform the action
-            next_state, reward, done, info = env.step(action)
-
-            # Print details
-            print(f"Action Taken: {action}")
-            print(f"New State: {next_state}, Reward: {reward}, Done: {done}")
-
-            # Update state
-            state = next_state
-
         except:
-
-
             print("succsess!")
 
 
