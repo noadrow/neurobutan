@@ -1,7 +1,7 @@
 # neuron world! 
-a game where you are a neuron in a developing brain 
-this game has a js version for human people to play (html file) 
-but the python version made for AI to play and using gym library
+a. A game where you are a neuron in a developing brain 
+b. This game has a js version for human people to play (html file) 
+c. But the python version made for AI to play and using gym library
 
 # rules! 
 ## neuron
