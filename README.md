@@ -35,3 +35,7 @@ a game where you are a neuron in a developing brain
 
 
 ** reset function should do both 6 and 3 of neuron and 4 of player
+
+
+### rules to add
+1. no self connection allowed for player (might want to add to every neuron as well)
