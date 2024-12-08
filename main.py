@@ -37,7 +37,7 @@ def ai_agent(state):
 
 env = [0, 0, 50, 50]
 timer = 60
-env = blue_ray()  # Initialize environment with default parameters
+env = env.NeuronGameEnv()
 game = env.Game()
 pos = {"x": 50, "y": 50}
 
@@ -49,7 +49,7 @@ neurons = [
         "activated": random.choice([True, False]),  # 50% chance of being True
         "time_to_die": 30
     }
-    for _ in range(6)
+    for _ in range(100)
 ]
 
 _neurons = env.add_neurons(neurons=neurons, game=game)  # Add neurons to the environment

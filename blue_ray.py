@@ -310,4 +310,3 @@ class NeuronGameEnv(gym.Env):
         def close(self):
             # Clean up resources
             print("Closing environment.")
-
