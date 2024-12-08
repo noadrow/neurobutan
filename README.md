@@ -9,6 +9,7 @@ a game where you are a neuron in a developing brain
 4. inner timer of 30 second counting down (missing count-down yet)
 5. activation of neuron add 10 sec to the inner tiemer
 6. inactivate after a period of time (missing code in here**)
+7. 50% of random self activation
    
 ## player
 1. spawn in the middle of the screen (50,50)
