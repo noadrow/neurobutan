@@ -1,8 +1,7 @@
 import gym
 import random
 import numpy as np
-from networkx import interval_graph
-
+import networkx as nx
 
 
 print('loading blue_ray')

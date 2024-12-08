@@ -49,7 +49,7 @@ neurons = [
         "activated": random.choice([True, False]),  # 50% chance of being True
         "time_to_die": 30
     }
-    for _ in range(100)
+    for _ in range(6)
 ]
 
 _neurons = env.add_neurons(neurons=neurons, game=game)  # Add neurons to the environment
@@ -94,12 +94,3 @@ while game_running:
     # Print details
     print(f"Action Taken: {action}")
     print(f"New State: {next_state}, Reward: {reward}, Done: {done}")
-
-    if __name__ == "__main__":
-        try:
-            print("ok")
-
-        except:
-            print("succsess!")
-
-
