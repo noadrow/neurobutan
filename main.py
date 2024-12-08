@@ -37,7 +37,7 @@ def ai_agent(state):
 
 env = [0, 0, 50, 50]
 timer = 60
-env = NeuronGameEnv()  # Initialize environment with default parameters
+env = ()  # Initialize environment with default parameters
 game = env.Game()
 pos = {"x": 50, "y": 50}
 
