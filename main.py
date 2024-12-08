@@ -2,7 +2,7 @@ import random
 
 from networkx.generators.random_graphs import dual_barabasi_albert_graph
 
-from ./blue_ray/NeuronGameEnv as dual_barabasi_albert_graph()
+import blue_ray
 
 timer = 60
 
