@@ -17,7 +17,7 @@ class update:
             plot_neuron_graph(game,neurons)
         except:
             print(exec())
-        return None
+            return None
 
 
 class br:

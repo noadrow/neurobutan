@@ -3,8 +3,22 @@ from networkx.generators.random_graphs import dual_barabasi_albert_graph
 
 import blue_ray as br
 
-br.plot_neuron_graph()
+ai_agent(action)
+try:
+    br.br.set_player(br, x=50, y=50)
+    br.plot_neuron_graph()
+    game = br.br.NeuronGameEnv
+    for i in range(0,100):
+        _x,_y = random.random()*100,random.random()*100
+        br.br.Neuron(_x, _y)
+    print("100 neuron enter the game")
+
+except Exception:
+    print(Exception)
+
 timer = 60
+is_game_over = True
+
 
 def input_system(action,game):
     global timer
