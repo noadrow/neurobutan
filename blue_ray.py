@@ -13,11 +13,15 @@ class INFINITE:
 class update:
     def __init__(self):
         "reflect on it"
+        try:
+            plot_neuron_graph(game,neurons)
+        except:
+            print(exec())
         return None
 
 
 class br:
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         print('loading noa/blue_ray-v0')
 
     def import_self_library(self):

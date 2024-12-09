@@ -1,10 +1,9 @@
 import random
 from networkx.generators.random_graphs import dual_barabasi_albert_graph
 
-import blue_ray.br as br
-import os
+import blue_ray as br
 
-
+br.plot_neuron_graph()
 timer = 60
 
 def input_system(action,game):
