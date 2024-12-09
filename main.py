@@ -2,7 +2,7 @@ import random
 
 from networkx.generators.random_graphs import dual_barabasi_albert_graph
 
-import blue_ray
+import blue_ray as br
 
 timer = 60
 
@@ -40,7 +40,7 @@ def ai_agent(state):
 
 env = [0, 0, 50, 50]
 timer = 60
-env = env.NeuronGameEnv()
+env = env.br()
 game = env.Game()
 pos = {"x": 50, "y": 50}
 
