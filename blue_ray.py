@@ -150,6 +150,7 @@ def br():
         def activate(self,action1,action2):
             self.player.x = action1
             self.player.y = action2
+
         for neuron in self.connections:
             if neuron.activated:
                 self.activated = True
