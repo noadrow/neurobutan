@@ -91,8 +91,9 @@ class br:
             plt.legend()
             plt.pause(100)
 
+    NeuronGameEnv = NeuronGameEnv()
     # Define a custom environment for the game
-    class NeuronGameEnv(gym.Env):
+    def NeuronGameEnv(NeuronGameEnv):
         def __init__(self):
             super().__init__()
             print("Initialise Neuron Game Environment...")
@@ -122,8 +123,6 @@ class br:
             def start(self,game):
                 self.game = game
                 return None
-
-        br.NeuronGameEnv.game.is_game_over = random.chose(0,100)
 
         def get_state(self):
             return self.game.game_state()
@@ -318,3 +317,9 @@ class br:
         return play,env
 
 
+try:
+    action_state_first = random.choice([0, 100])
+    br.NeuronGameEnv.activate_neuron(action_state_first)
+    br.NeuronGameEnv.game.is_game_over = random.choice([0, 100])
+except():
+    print(NeuronGameEnv)

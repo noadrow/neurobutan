@@ -1,9 +1,18 @@
 import random
 from networkx.generators.random_graphs import dual_barabasi_albert_graph
-
 import blue_ray
+import blue_ray as br
 
-#ai_agent(action)
+def NeuronGameEnv(exp, global_vars, local_vars=None):
+    for i in range(0,action):
+        try:
+            print(action_state_first)
+            int_info_action = br.NeuronGameEnv(action)
+            exec(exp, global_vars, local_vars)
+        finally:
+            exec(exp, action)
+
+
 try:
     blue_ray.set_player(br, x=50, y=50)
     blue_ray.plot_neuron_graph()
