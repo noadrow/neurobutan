@@ -44,4 +44,4 @@
 
 
 ## game state 
-Print(state);
+Print(<state>);
