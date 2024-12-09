@@ -151,12 +151,11 @@ def br():
             for neuron in self.connections:
                 if neuron.activated:
                     self.activated = True
-                    #do not allow self connections
-            print(f"Player activation status: {self.activated}")
-            self.time_to_die += 10
-            print(f"Player time_to_die: {self.time_to_die}")
-            closest_neuron = self.find_closest_neuron(neurons)
-            self.connections.append(closest_neuron)
+                    print(f"Player activation status: {self.activated}")
+                    self.time_to_die += 10
+                    print(f"Player time_to_die: {self.time_to_die}")
+                    closest_neuron = self.find_closest_neuron(neurons)
+                    self.connections.append(closest_neuron)
 
         def find_closest_neuron(player, neurons):
         """
