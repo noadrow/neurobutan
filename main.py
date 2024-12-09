@@ -3,6 +3,8 @@ import blue_ray
 import blue_ray as br
 from networkx.generators.random_graphs import dual_barabasi_albert_graph
 
+from blue_ray import action_state_first
+
 
 def main():
     try:
@@ -44,10 +46,11 @@ def main():
             if random_neuron not in neuron["connections"]:
                 neuron["connections"].append(random_neuron)
 
-        if action:
-            game_running.update(neurons, action)
-        else:
-            game_running.render(neurons)
+    action = action_state_first
+    if action=='':
+        game_running.update(neurons, action)
+    else:
+        game_running.render(neurons)
 
         # פעולת השחקן
         # אתחל מצב
@@ -56,12 +59,11 @@ def main():
             return int(None)
         action = ai_agent(state)
 
-        input_system(action)
-
-        # פעולה שבוצעה במשחק
-        next_state, reward, done, info = env.game.set_action(action)
-        print(f"Action Taken: {action}")
-        print(f"New State: {next_state}, Reward: {reward}, Done: {done}")
+        def input_system(action):
+            # פעולה שבוצעה במשחק
+            next_state, reward, done, info = env.game.set_action(action)
+            print(f"Action Taken: {action}")
+            print(f"New State: {next_state}, Reward: {reward}, Done: {done}")
 
 
 # הרצת הקוד בתנאים הנכונים
