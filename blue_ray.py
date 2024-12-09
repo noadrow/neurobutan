@@ -1,9 +1,16 @@
-from asyncio.windows_events import INFINITE
-
 import gym
 import numpy as np
 import networkx as nx
 import random
+
+class INFINITE:
+    def __init__(self):
+        return self
+
+class update:
+    def __init__(self):
+        "reflect on it"
+        return None
 
 
 def br():
@@ -225,67 +232,67 @@ def br():
                 neuron.activate()
 
         def connect_neurons(self, neuron1, neuron2):
-        neuron1.connect(neuron2)
-        neuron2.connect(neuron1)
+            neuron1.connect(neuron2)
+            neuron2.connect(neuron1)
 
         def reset(self,x,y):
-        for neuron in self.neurons:
-            neuron.activated = False
-            neuron.time_to_die = max(0, neuron.time_to_die - 10)
-            neuron.connections = []
-        self.player.activate(x, y )
-        print("Game reset.")
-        return self.game_state()
+            for neuron in self.neurons:
+                neuron.activated = False
+                neuron.time_to_die = max(0, neuron.time_to_die - 10)
+                neuron.connections = []
+            self.player.activate(x, y )
+            print("Game reset.")
+            return self.game_state()
 
         def game_state(self):
-        if(not self.player):
-            self.player = {'x':50,'y':50,'activated':False}
-        state = {
-            "player": {
-                "x": self.player["x"],
-                "y": self.player["y"],
-                "activated": self.player["activated"],
-            },
-            "neurons": [{
-                "x": neuron["x"],
-                "y": neuron["y"],
-                "activated": neuron["activated"],
-                "time_to_die": neuron["time_to_die"]
-            } for neuron in self.neurons],
-            "is_game_over": self.is_game_over,
-        }
-        return state
+            if(not self.player):
+                self.player = {'x':50,'y':50,'activated':False}
+            state = {
+                "player": {
+                    "x": self.player["x"],
+                    "y": self.player["y"],
+                    "activated": self.player["activated"],
+                },
+                "neurons": [{
+                    "x": neuron["x"],
+                    "y": neuron["y"],
+                    "activated": neuron["activated"],
+                    "time_to_die": neuron["time_to_die"]
+                } for neuron in self.neurons],
+                "is_game_over": self.is_game_over,
+            }
+            return state
 
         # Gym's `reset()` function
         def reset(self,action):
-        print(self.reset(action))
-        return type(action)
+            print(self.reset(action))
+            return type(action)
 
         # Gym's `step()` function
         def step(self,action):
-        if(not self.player):
-            self.player = {'x':50,'y':50}
+            if (self.player=={}):
+                self.player = {'x':50,'y':50}
 
-        if action == 0:
-            self.player['x'] += 1
-            return self.player
-        elif action == 1:
-            self.player['x'] -= 1
-            return self.player
-        elif action == 2:
-            self.player['y'] += 1
-            return self.player
-            # Example action: move up
-        elif action == 3:
-            self.player['y'] -= 1
-            return self.player
-        elif action == 4:
-            if self.neurons:
-                random_neuron = random.choice(self.neurons)
-                self.player.connect_to_neuron(random_neuron)
+            if action == 0:
+                self.player['x'] += 1
                 return self.player
-            else:
-                print("No neurons available to connect to.")
+            elif action == 1:
+                self.player['x'] -= 1
+                return self.player
+            elif action == 2:
+                self.player['y'] += 1
+                return self.player
+                # Example action: move up
+            elif action == 3:
+                self.player['y'] -= 1
+                return self.player
+            elif action == 4:
+                if self.neurons:
+                    random_neuron = random.choice(self.neurons)
+                    self.player.connect_to_neuron(random_neuron)
+                    return self.player
+                else:
+                    print("No neurons available to connect to.")
 
         if random.random() < 0.5:  # 50% chance to activate a neuron
             self.activate_neuron()
@@ -302,4 +309,5 @@ def br():
         print("Closing environment.")
 
 
-br(update())
+play = update()
+result = br()

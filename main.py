@@ -1,5 +1,5 @@
 import random
-
+import gym
 from networkx.generators.random_graphs import dual_barabasi_albert_graph
 
 import blue_ray as br
@@ -38,9 +38,8 @@ def ai_agent(state):
     # For example, if actions are discrete integers:
     return env.action_space.sample()  # Random action for demonstration
 
-env = [0, 0, 50, 50]
 timer = 60
-env = env.br()
+gym.env.br()
 game = env.Game()
 pos = {"x": 50, "y": 50}
 
