@@ -1,5 +1,5 @@
 import random
-import gym
+import env
 from networkx.generators.random_graphs import dual_barabasi_albert_graph
 
 import blue_ray as br
