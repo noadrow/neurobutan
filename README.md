@@ -41,3 +41,7 @@
 
 ### rules to add
 1. no self connection allowed for player (might want to add to every neuron as well)
+
+
+## game state 
+Print(state);
