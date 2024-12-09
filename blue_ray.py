@@ -91,7 +91,6 @@ class br:
             plt.legend()
             plt.pause(100)
 
-    NeuronGameEnv = NeuronGameEnv()
     # Define a custom environment for the game
     def NeuronGameEnv(NeuronGameEnv):
         def __init__(self):
@@ -319,7 +318,8 @@ class br:
 
 try:
     action_state_first = random.choice([0, 100])
-    br.NeuronGameEnv.activate_neuron(action_state_first)
+    action_state_first = "br.NeuronGameEnv.activate_neuron(action_state_first)"
+    action_state_second = ""
     br.NeuronGameEnv.game.is_game_over = random.choice([0, 100])
 except():
     print(NeuronGameEnv)

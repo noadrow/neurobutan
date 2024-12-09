@@ -1,5 +1,5 @@
 import random
-import blue_ray  # יש לוודא שמודול זה קיים
+import blue_ray
 import blue_ray as br
 from networkx.generators.random_graphs import dual_barabasi_albert_graph
 
