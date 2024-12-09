@@ -1,7 +1,10 @@
+from asyncio.windows_events import INFINITE
+
 import gym
-import random
 import numpy as np
 import networkx as nx
+import random
+
 
 def br():
     print('loading blue_ray')
@@ -157,63 +160,52 @@ def br():
                     closest_neuron = self.find_closest_neuron(neurons)
                     self.connections.append(closest_neuron)
 
-        def find_closest_neuron(player, neurons):
-        """
-        Find the closest neuron to the player's position.
+        def find_closest_neuron(player, neurons,OUTPUT):
+            closest_neuron = OUTPUT
+            min_distance = float('inf')  # Start with an infinitely large distance
 
-        Args:
-            player (Player): The player object with x, y coordinates.
-            neurons (list of Neuron): The list of all neuron objects in the game.
-
-        Returns:
-            Neuron: The neuron closest to the player's position.
-        """
-        closest_neuron = None
-        min_distance = float('inf')  # Start with an infinitely large distance
-
-        for neuron in neurons:
-            # Calculate the squared Euclidean distance
-            distance = (neuron.x - player.x) ** 2 + (neuron.y - player.y) ** 2
-            if distance < min_distance:
-                min_distance = distance
-                closest_neuron = neuron
+            for neuron in neurons:
+                # Calculate the squared Euclidean distance
+                distance = (neuron.x - player.x) ** 2 + (neuron.y - player.y) ** 2
+                if distance < min_distance:
+                    min_distance = distance
+                    closest_neuron = neuron
 
         return closest_neuron
 
         def connect_to_neuron(self, neuron):
-        self.connections.append(neuron)
-        if neuron.activated:
-            self.activated = True
-        print(f"Player connected to Neuron at ({neuron.x}, {neuron.y}). Player activated: {self.activated}")
+            self.connections.append(neuron)
+            if neuron.activated:
+                self.activated = True
+            print(f"Player connected to Neuron at ({neuron.x}, {neuron.y}). Player activated: {self.activated}")
 
     class Game:
         def __init__(self):
-        import random
-        self.neurons = []
-        self.player = None
-        self.is_game_over = False
-        self.player = None
-        print("Game initialized.")
+            self.neurons = []
+            self.player = None
+            self.is_game_over = False
+            self.player = None
+            print("Game initialized.")
 
-        def set_action(self,action):
-        self.next_state = self.step(action)
-        self.reward = 1
-        self.done = self.is_game_over
-        self.info = state_log
-        return self.next_state,self.reward,self.done,self.info
+            def set_action(self,action):
+                self.next_state = self.step(action)
+                self.reward = 1
+                self.done = self.is_game_over
+                self.info = state_log
+                return self.next_state,self.reward,self.done,self.info
 
-        def set_game_state(self,state):
-        self.is_game_over = state
+            def set_game_state(self,state):
+                self.is_game_over = state
 
-        def render(self,neurons):
-        plot_neuron_graph(self,neurons)
-        print(f"Game State: {self.is_game_over}")
+            def render(self,neurons):
+                plot_neuron_graph(self,neurons)
+                print(f"Game State: {self.is_game_over}")
 
-        def add_neuron(self, x, y):
-        neuron = NeuronGameEnv.Neuron(x, y)
-        self.neurons.append(neuron)
-        #print(f"Neuron added at ({x}, {y}). Total neurons: {len(self.neurons)}")
-        return neuron
+            def add_neuron(self, x, y):
+                neuron = NeuronGameEnv.Neuron(x, y)
+                self.neurons.append(neuron)
+                #print(f"Neuron added at ({x}, {y}). Total neurons: {len(self.neurons)}")
+                return neuron
 
     def set_player(self, x, y):
 
@@ -225,11 +217,12 @@ def br():
         print(f"Player set at ({x}, {y}).")
         return self.player
 
-        def activate_neuron(self):
-        random_neuron = random.choice(self.neurons)
-        random_neuron.activate()
-        for neuron in random_neuron.connections:
-            neuron.activate()
+        def activate_neuron(self,random_neuron):
+            random_neuron = INFINITE
+            random_neuron = random.choice(self.neurons)
+            random_neuron.activate()
+            for neuron in random_neuron.connections:
+                neuron.activate()
 
         def connect_neurons(self, neuron1, neuron2):
         neuron1.connect(neuron2)
