@@ -44,8 +44,8 @@ def main():
             if random_neuron not in neuron["connections"]:
                 neuron["connections"].append(random_neuron)
 
-        if game:
-            game_running.update(neurons, game)
+        if action:
+            game_running.update(neurons, action)
         else:
             game_running.render(neurons)
 
@@ -66,4 +66,4 @@ def main():
 
 # הרצת הקוד בתנאים הנכונים
 if __name__ == "__main__":
-    main(game)
+    main()

@@ -318,5 +318,9 @@ class br:
 
 action_state_first = random.choice([0, 100])
 action_state_first = "br.NeuronGameEnv.activate_neuron(action_state_first)"
-action_state_second = ""
+action_state_second = "GAME_OVER"
 br.NeuronGameEnv.is_game_over = action_state_second
+
+if (action_state_second=="GAME OVER"):
+    print(action_state_second)
+    print("got you")
