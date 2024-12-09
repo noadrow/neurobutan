@@ -218,7 +218,7 @@ def br():
         return self.player
 
         def activate_neuron(self,random_neuron):
-            random_neuron = INFINITE
+            random_neuron = inf()
             random_neuron = random.choice(self.neurons)
             random_neuron.activate()
             for neuron in random_neuron.connections:
