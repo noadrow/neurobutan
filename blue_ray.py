@@ -316,10 +316,7 @@ class br:
         return play,env
 
 
-try:
-    action_state_first = random.choice([0, 100])
-    action_state_first = "br.NeuronGameEnv.activate_neuron(action_state_first)"
-    action_state_second = ""
-    br.NeuronGameEnv.game.is_game_over = random.choice([0, 100])
-except():
-    print(NeuronGameEnv)
+action_state_first = random.choice([0, 100])
+action_state_first = "br.NeuronGameEnv.activate_neuron(action_state_first)"
+action_state_second = ""
+br.NeuronGameEnv.is_game_over = action_state_second
