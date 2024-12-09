@@ -1,119 +1,71 @@
 import random
-from networkx.generators.random_graphs import dual_barabasi_albert_graph
-import blue_ray
+import blue_ray  # יש לוודא שמודול זה קיים
 import blue_ray as br
-
-def NeuronGameEnv(exp, global_vars, local_vars=None):
-    for i in range(0,action):
-        try:
-            print(action_state_first)
-            int_info_action = br.NeuronGameEnv(action)
-            exec(exp, global_vars, local_vars)
-        finally:
-            exec(exp, action)
+from networkx.generators.random_graphs import dual_barabasi_albert_graph
 
 
-try:
-    blue_ray.set_player(br, x=50, y=50)
-    blue_ray.plot_neuron_graph()
-    game = blue_ray.br.NeuronGameEnv
-    for i in range(0,100):
-        _x,_y = random.random()*100,random.random()*100
-        blue_ray.br.Neuron(_x, _y)
-    print("100 neuron enter the game")
+# פונקציה שמבצעת את אתחול המשחק
+def main():
+    try:
+        # אתחול של השחקן והמפה
+        blue_ray.set_player(br, x=50, y=50)
+        blue_ray.plot_neuron_graph()  # הצגת גרף של נוירונים
+        game = blue_ray.br.NeuronGameEnv
 
-except Exception:
-    print(Exception)
+        # יצירת 100 נוירונים רנדומליים והכנסתם למשחק
+        for i in range(100):
+            _x, _y = random.random() * 100, random.random() * 100
+            blue_ray.br.Neuron(_x, _y)
+        print("100 neuron enter the game")
 
-timer = 60
-is_game_over = False
+    except Exception as e:
+        print(f"Error: {e}")
+
+    timer = 60
+    game_running = True
+
+    # יצירת מצב התחלתי של נוירונים
+    neurons = [
+        {
+            "x": random.randint(0, 100),
+            "y": random.randint(0, 100),
+            "activated": random.choice([True, False]),  # 50% סיכוי להיות מופעל
+            "time_to_die": 30
+        }
+        for _ in range(6)
+    ]
+
+    _neurons = blue_ray.add_neurons(neurons=neurons, game=game)  # הוספת נוירונים למשחק
+    print("Generated Neurons:", neurons)
+
+    while game_running:
+        picture = blue_ray.reset(game)
+        state_log = picture.get_state()
+        game_running = not state_log['is_game_over']
+        print("Game state after reset:", state_log)
+
+        # עדכון קשרים רנדומליים בין נוירונים
+        for neuron in neurons:
+            random_neuron = random.choice([n for n in neurons if n != neuron])
+            if "connections" not in neuron:
+                neuron["connections"] = []  # אם לא הוגדר קשר, אתחל את הרשימה
+            if random_neuron not in neuron["connections"]:
+                neuron["connections"].append(random_neuron)
+
+        # עדכון הנוירונים וציור המצב החדש
+        env.update_neurons(neurons=neurons, game=game)  # עדכון מצב הנוירונים
+        game.render(neurons)
+
+        # פעולת השחקן
+        action = ai_agent(state_log)  # בחירת פעולה אוטומטית
+        input_system(action, game)  # עדכון פעולה למשחק
+
+        # פעולה שבוצעה במשחק
+        next_state, reward, done, info = env.game.set_action(action)
+        print(f"Action Taken: {action}")
+        print(f"New State: {next_state}, Reward: {reward}, Done: {done}")
 
 
-def input_system(action,game):
-    global timer
-    # Player input and action logic
-    if action == 0:
-        game.player.connect_to_neuron(sorted_neurons[0])
-    elif action == 1:
-        game.player.connect_to_neuron(sorted_neurons[1])
-    elif action == 2:
-        game.player.connect_to_neuron(sorted_neurons[2])
-    elif action == 3:
-        game.player.connect_to_neuron(sorted_neurons[3])
-
-    game.player.update(state_log["player"])
-    game.render(neurons)
-
-    if state_log['player']['activated']:
-        timer += 0.1
-    else:
-        timer -= 0.1
-
-    if timer <= 0:
-        print("game over")
-        game.set_game_state(True)
-    elif timer >= 60:
-        print("you won!")
-        game.set_game_state(True)
-
-def ai_agent(state):
-    # Logic for selecting an action; replace with a model if needed
-    # For example, if actions are discrete integers:
-    return env.action_space.sample()  # Random action for demonstration
-
-timer = 60
-pos = {"x": 50, "y": 50}
-
-# Generate 6 neurons with the specified properties
-neurons = [
-    {
-        "x": random.randint(0, 100),
-        "y": random.randint(0, 100),
-        "activated": random.choice([True, False]),  # 50% chance of being True
-        "time_to_die": 30
-    }
-    for _ in range(6)
-]
-
-_neurons = blue_ray.add_neurons(neurons=neurons, game=game)  # Add neurons to the environment
-print("Generated Neurons:", neurons)
-
-game_running = True
-while game_running:
-    picture = blue_ray.reset(game)
-    state_log = picture.get_state()
-    game_running = not state_log['is_game_over']
-    print("Game state after reset:", state_log)
-
-    # Random connection update for neurons
-    for neuron in neurons:
-        random_neuron = random.choice([n for n in neurons if n != neuron])  # Choose a different random neuron
-        if "connections" not in neuron:
-            neuron["connections"] = []  # Initialize connections if not already present
-        if random_neuron not in neuron["connections"]:  # Avoid duplicate connections
-            neuron["connections"].append(random_neuron)
-
-    # Render the updated neurons and game state
-    env.update_neurons(neurons=neurons, game=game)  # Assuming a method `update_neurons` exists
-    game.render(neurons)
-
-    # Assume the player's current position is given by state_log["player"]["x"] and state_log["player"]["y"]
-    player_x = state_log["player"]["x"]
-    player_y = state_log["player"]["y"]
-
-    pos = [player_x,player_y]
-
-    # Calculate distance and sort neurons
-    sorted_neurons = sorted(
-        neurons,
-        key=lambda neuron: ((neuron["x"] - player_x) ** 2 + (neuron["y"] - player_y) ** 2) ** 0.5
-    )
-    action = ai_agent(state_log)
-    input_system(action,game)
-
-    # Perform the action
-    next_state, reward, done, info = env.game.set_action(action)
-
-    # Print details
-    print(f"Action Taken: {action}")
-    print(f"New State: {next_state}, Reward: {reward}, Done: {done}")
+# הרצת הקוד בתנאים הנכונים
+if __name__ == "__main__":
+    main()
