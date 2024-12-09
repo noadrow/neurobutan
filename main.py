@@ -1,23 +1,23 @@
 import random
 from networkx.generators.random_graphs import dual_barabasi_albert_graph
 
-import blue_ray as br
+import blue_ray
 
-ai_agent(action)
+#ai_agent(action)
 try:
-    br.br.set_player(br, x=50, y=50)
-    br.plot_neuron_graph()
-    game = br.br.NeuronGameEnv
+    blue_ray.set_player(br, x=50, y=50)
+    blue_ray.plot_neuron_graph()
+    game = blue_ray.br.NeuronGameEnv
     for i in range(0,100):
         _x,_y = random.random()*100,random.random()*100
-        br.br.Neuron(_x, _y)
+        blue_ray.br.Neuron(_x, _y)
     print("100 neuron enter the game")
 
 except Exception:
     print(Exception)
 
 timer = 60
-is_game_over = True
+is_game_over = False
 
 
 def input_system(action,game):
@@ -33,7 +33,7 @@ def input_system(action,game):
         game.player.connect_to_neuron(sorted_neurons[3])
 
     game.player.update(state_log["player"])
-    #game.render(neurons)
+    game.render(neurons)
 
     if state_log['player']['activated']:
         timer += 0.1
@@ -53,8 +53,6 @@ def ai_agent(state):
     return env.action_space.sample()  # Random action for demonstration
 
 timer = 60
-gym.env.br()
-game = env.Game()
 pos = {"x": 50, "y": 50}
 
 # Generate 6 neurons with the specified properties
@@ -68,12 +66,12 @@ neurons = [
     for _ in range(6)
 ]
 
-_neurons = env.add_neurons(neurons=neurons, game=game)  # Add neurons to the environment
+_neurons = blue_ray.add_neurons(neurons=neurons, game=game)  # Add neurons to the environment
 print("Generated Neurons:", neurons)
 
 game_running = True
 while game_running:
-    picture = env.reset(game)
+    picture = blue_ray.reset(game)
     state_log = picture.get_state()
     game_running = not state_log['is_game_over']
     print("Game state after reset:", state_log)

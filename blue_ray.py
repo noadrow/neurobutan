@@ -10,11 +10,10 @@ class INFINITE:
     def __init__(self):
         return self
 
-class update:
-    def __init__(self):
-        "reflect on it"
+def update(game,neurons):
+    def __init__(game,neurons):
         try:
-            plot_neuron_graph(game,neurons)
+            self.plot_neuron_graph(game,neurons)
         except:
             print(exec())
             return None
@@ -118,16 +117,13 @@ class br:
                     node_colors.append('grey')
             return self
 
-        def add_neurons(self,game,neurons):
-            def start(self,game,neurons):
-                game.neurons = neurons
-                return None
-
 
         def reset(self,game):
             def start(self,game):
                 self.game = game
                 return None
+
+        br.NeuronGameEnv.game.is_game_over = random.chose(0,100)
 
         def get_state(self):
             return self.game.game_state()
