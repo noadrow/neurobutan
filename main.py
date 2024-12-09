@@ -1,8 +1,9 @@
 import random
-import env
 from networkx.generators.random_graphs import dual_barabasi_albert_graph
 
-import blue_ray as br
+import blue_ray.br as br
+import os
+
 
 timer = 60
 

@@ -3,6 +3,9 @@ import numpy as np
 import networkx as nx
 import random
 
+from fontTools.misc.cython import returns
+
+
 class INFINITE:
     def __init__(self):
         return self
@@ -13,10 +16,13 @@ class update:
         return None
 
 
-def br():
-    print('loading blue_ray')
-    neurons = []
-    state_log = {}
+class br:
+    def __init__(self, *args, **kwargs):
+        print('loading noa/blue_ray-v0')
+
+    def import_self_library(self):
+        neurons = []
+        state_log = {}
 
     def find_closest_neuron(player, neurons):
         """
@@ -307,7 +313,8 @@ def br():
     def close(self):
         # Clean up resources
         print("Closing environment.")
+        play = update()
+        env = br()
+        return play,env
 
 
-play = update()
-env = br()
