@@ -1,71 +1,69 @@
-import random
 import blue_ray
-import blue_ray as br
-from networkx.generators.random_graphs import dual_barabasi_albert_graph
+import random
+import random
+import matplotlib.pyplot as plt
+import networkx as nx
 
-from blue_ray import action_state_first
+is_game_over = True
 
-
-def main():
-    try:
-        def __init__(game):
-            blue_ray.set_player(br, x=50, y=50)
-            blue_ray.plot_neuron_graph()  # הצגת גרף של נוירונים
-            game = blue_ray.br.NeuronGameEnv
-            return game_running
-        # יצירת 100 נוירונים רנדומליים והכנסתם למשחק
-        for i in range(100):
-            _x, _y = random.random() * 100, random.random() * 100
-            blue_ray.br.Neuron(_x, _y)
-        print("100 neuron enter the game")
-
-    except Exception as e:
-        print(f"Error: {e}")
-
-    timer = 60
-    game_running = True
-
-    # יצירת מצב התחלתי של נוירונים
-    neurons = [
-        {
-            "x": random.randint(0, 100),
-            "y": random.randint(0, 100),
-            "activated": random.choice([True, False]),  # 50% סיכוי להיות מופעל
-            "time_to_die": 30
-        }
-        for _ in range(6)
-    ]
-    print("Generated Neurons:", neurons)
-
-    while game_running:
-        # עדכון קשרים רנדומליים בין נוירונים
-        for neuron in neurons:
-            random_neuron = random.choice([n for n in neurons if n != neuron])
-            if "connections" not in neuron:
-                neuron["connections"] = []
-            if random_neuron not in neuron["connections"]:
-                neuron["connections"].append(random_neuron)
-
-    action = action_state_first
-    if action=='':
-        game_running.update(neurons, action)
-    else:
-        game_running.render(neurons)
-
-        # פעולת השחקן
-        # אתחל מצב
-        state = '<create_log_by_TOKEN>'
-        def ai_agent():
-            return int(None)
-        action = ai_agent(state)
-
-        def input_system(action):
-            # פעולה שבוצעה במשחק
-            next_state, reward, done, info = env.game.set_action(action)
-            print(f"Action Taken: {action}")
-            print(f"New State: {next_state}, Reward: {reward}, Done: {done}")
+time = 60
 
 
-# הרצת הקוד בתנאים הנכונים
-if __name__ == "__main__":
-    main()
+class Neuron:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.connections = []
+        self.activated = False
+        self.time_to_die = 30
+
+    def activate(self):
+        self.activated = True
+        self.time_to_die += 10
+
+    def connect(self, neuron):
+        self.connections.append(neuron)
+
+    def is_alive(self):
+        return self.time_to_die > 0
+
+    def move_right(self):
+        self.x += 1
+
+    def move_left(self):
+        self.x -= 1
+
+    def move_up(self):
+        self.y += 1
+
+    def move_down(self):
+        self.y -= 1
+
+    def action(self):
+        options = [1,2,3,4]
+        action = random.choice(throws)
+        if action==1:
+            self.move_up()
+        if action==2:
+            self.move_down()
+        if action==3:
+            self.move_right()
+        if action==4:
+            self.move_left()
+
+#start game
+game = blue_ray
+action = 1
+observation, info = game.br.reset(game,action)
+
+for _ in range(1000):
+    x, y = random.randint(0, 100), random.randint(0, 100)
+    game.add_neuron(x, y)
+
+    observation, reward, terminated, truncated, info = game.step(action)
+
+    if terminated or truncated:
+        observation, info = game.reset()
+    #game.br.find_closest_neuron(game.br.)
+
+game.close()
