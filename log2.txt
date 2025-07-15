@@ -1,0 +1,2 @@
+'sending you game state, your goal is to connect as much neurons to be activated. this is your current stat for round number 0 your action spcae is 1-5 answer only by one of those numbers:1=up,2=down,3=right,4=left,5=connect to closest neuron'
+
