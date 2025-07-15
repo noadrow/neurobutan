@@ -66,16 +66,21 @@ for _ in range(1000):
     neurons.append(game.add_neuron(x, y))
 
 i = 0
-res = f"sending you game state, your goal is to connect as much neurons to be activated this is your current stat for round number {i}:"
+res = (f"sending you game state, your goal is to connect as much neurons to be activated. this is your current stat for round number {i} your action spcae is 1-5 answer only by one of those numbers:"
+       f"1=up,2=down,3=right,4=left,5=connect to closest neuron")
 while not is_game_over:
     i += 1
-    obs = game.step(action)
-    obs = game.reset(action,neurons)
+
+    obs = game.step(str(action))
+    obs = game.reset(str(action),neurons)
+    game.render(obs["neurons"])
     neurons_state = ""
     for neuron in obs["neurons"]:
         neurons_state += f"{neuron.x}, {neuron.y} , {neuron.activated}"
     player_state = obs["player"]
     action = send_content(res,f"round number {i}: your status:{player_state} neurons state: {neurons_state}")
+
+
 
 
 game.close()

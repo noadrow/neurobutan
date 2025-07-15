@@ -40,16 +40,16 @@ class br:
         # Add neurons as nodes to the graph
         for neuron in game.neurons:
             try:
-                G.add_node(neuron['x'],neuron['y'])
-            except e:
-                print(NeuronGameEnv);
+                G.add_node((neuron.x,neuron.y),pos=(neuron.x,neuron.y))
+            except:
+                print(NeuronGameEnv)
 
         # Add connections as edges
         for neuron in game.neurons:
             if not neurons == []:
                 for connected_neuron in neurons:
-                    for _neuron in connected_neuron['connections']:
-                        G.add_edge((neuron['x'], neuron['y']), (connected_neuron['x'], connected_neuron['y']))
+                    for _neuron in connected_neuron.connections:
+                        G.add_edge((neuron.x, neuron.y), (connected_neuron.x, connected_neuron.y))
 
         node_colors = []
         for node in G.nodes:
@@ -59,8 +59,8 @@ class br:
         plt.figure(figsize=(8, 8))
 
         # Draw the graph with node positions
-        pos = {f"(neuron['{x}'], neuron['{y}'])": (neuron['x'], neuron['y']) for neuron in game.neurons}
-        nx.draw(G, pos, with_labels=False, node_size=100, node_color=node_colors, edge_color='gray')
+        pos = {(neuron.x, neuron.y): (neuron.x, neuron.y) for neuron in game.neurons}
+        nx.draw(G, pos, with_labels=False, node_size=100, node_color='gray', edge_color='gray')
 
         # Plot the player
         if game.player:
@@ -113,6 +113,11 @@ class NeuronGameEnv:
         def is_alive(self):
             return self.time_to_die > 0
 
+        def connect_to_neuron(self, neuron):
+            self.connections.append(neuron)
+            if neuron.activated:
+                self.activated = True
+
     class Player:
         def __init__(self,x, y):
             self.x = x
@@ -156,7 +161,6 @@ class NeuronGameEnv:
         self.connections.append(neuron)
         if neuron.activated:
             self.activated = True
-        print(f"Player connected to Neuron at ({neuron.x}, {neuron.y}). Player activated: {self.activated}")
 
 class Game:
     def __init__(self):
@@ -179,7 +183,7 @@ class Game:
         self.is_game_over = state
 
     def render(self,neurons):
-        plot_neuron_graph(self,neurons)
+        br.plot_neuron_graph(self,neurons)
         print(f"Game State: {self.is_game_over}")
 
     def add_neuron(self, x, y):
@@ -198,8 +202,7 @@ class Game:
         print(f"Player set at ({x}, {y}).")
         return self.player
 
-    def activate_neuron(self,random_neuron):
-        random_neuron = inf()
+    def activate_neuron(self):
         random_neuron = random.choice(self.neurons)
         random_neuron.activate()
         for neuron in random_neuron.connections:
@@ -253,21 +256,22 @@ class Game:
             return self.player
         elif action == 4:
             if self.neurons:
-                random_neuron = random.choice(self.neurons)
-                self.player.connect_to_neuron(random_neuron)
+                self.player.connect_to_neuron(self.find_closest_neuron())
                 return self.player
             else:
                 print("No neurons available to connect to.")
 
-        if random.random() < 0.5:  # 50% chance to activate a neuron
+        if random.random() < 0.5:
+            # 50% chance to activate a neuron
+            random_neuron = random.choice(self.neurons)
             self.activate_neuron()
 
         # Calculate reward (simple example: reward for player being activated)
-        reward = 1 if self.player.activated else -1
+        #reward = 1 if self.player.activated else -1
         done = self.is_game_over
 
         # Return new state (position of player) and reward
-        return np.array([self.player.x, self.player.y]), reward, done
+        return np.array([self.player["x"], self.player["y"]]), done
 
     def close(self):
         # Clean up resources
