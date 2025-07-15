@@ -3,13 +3,14 @@ import random
 import random
 import matplotlib.pyplot as plt
 import networkx as nx
+from gemini_API import send_content
 
 is_game_over = True
 
 time = 60
 
 
-class Neuron:
+class Player:
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -40,8 +41,6 @@ class Neuron:
         self.y -= 1
 
     def action(self):
-        options = [1,2,3,4]
-        action = random.choice(throws)
         if action==1:
             self.move_up()
         if action==2:
@@ -50,20 +49,33 @@ class Neuron:
             self.move_right()
         if action==4:
             self.move_left()
+        if action==5:
+            self.connect(env.find_closest_neuron(neurons))
 
 #start game
-game = blue_ray
+env = blue_ray
+game = blue_ray.Game()
 action = 1
-observation, info = game.br.reset(game,action)
+neurons = []
+
+state = game.reset(action,neurons)
+obs,neurons, is_game_over = state["player"],state["neurons"],state["is_game_over"]
 
 for _ in range(1000):
     x, y = random.randint(0, 100), random.randint(0, 100)
-    game.add_neuron(x, y)
+    neurons.append(game.add_neuron(x, y))
 
-    observation, reward, terminated, truncated, info = game.step(action)
+i = 0
+res = f"sending you game state, your goal is to connect as much neurons to be activated this is your current stat for round number {i}:"
+while not is_game_over:
+    i += 1
+    obs = game.step(action)
+    obs = game.reset(action,neurons)
+    neurons_state = ""
+    for neuron in obs["neurons"]:
+        neurons_state += f"{neuron.x}, {neuron.y} , {neuron.activated}"
+    player_state = obs["player"]
+    action = send_content(res,f"round number {i}: your status:{player_state} neurons state: {neurons_state}")
 
-    if terminated or truncated:
-        observation, info = game.reset()
-    #game.br.find_closest_neuron(game.br.)
 
 game.close()
